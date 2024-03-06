@@ -16,8 +16,8 @@ node {
         sh 'docker build -t devkishor8007/sample-api-express-pipeline:${BUILD_NUMBER} .'
     }
     stage('deploy to docker hub') {
-        withCredentials([usernamePassword(credentialsId: 'dockerhubcred', usernameVariable: 'USERNAME_DOC', passwordVariable: 'PASS_DOC')]) {
-            sh 'docker login -u ${USERNAME_DOC} -p ${PASS_DOC}'
+        withCredentials([usernamePassword(credentialsId: 'dockerhubcred', usernameVariable: 'USERNAME_DOC', passwordVariable: 'PASSWORD_DOC')]) {
+            sh 'docker login -u ${USERNAME_DOC} -p ${PASSWORD_DOC}'
             sh 'docker image push devkishor8007/sample-api-express-pipeline:${BUILD_NUMBER}'
             echo "username is $USERNAME"
         }
