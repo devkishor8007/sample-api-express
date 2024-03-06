@@ -1,0 +1,28 @@
+// scripted pipeline
+node {
+    stage('preperation') {
+        echo 'cloning repo'
+        git url: 'https://github.com/devkishor8007/sample-api-express.git', branch: 'master'
+    }
+    stage('test') {
+        echo 'running test cases'
+        nodejs(nodeJSInstallationName: 'node 18') {
+            sh 'npm i -D'
+            sh 'npm run test'
+        }
+    }
+    stage('build') {
+        echo 'building image'
+        sh 'docker build -t devkishor8007/sample-api-express-pipeline:${BUILD_NUMBER} .'
+    }
+    stage('deploy to docker hub') {
+        withCredentials([usernamePassword(credentialsId: 'dockerhubcred', usernameVariable: 'USERNAME_DOC', passwordVariable: 'PASS_DOC')]) {
+            sh 'docker login -u ${USERNAME_DOC} -p ${PASS_DOC}'
+            sh 'docker image push devkishor8007/sample-api-express-pipeline:${BUILD_NUMBER}'
+            echo "username is $USERNAME"
+        }
+    }
+    stage('cleanup') {
+        sh 'docker logout'
+    }
+}
