@@ -32,6 +32,7 @@ pipeline {
     agent any
     environment {
         IMAGE_NAME_DOC = "devkishor8007/sample-api-express-pipeline:${BUILD_NUMBER}"
+        scannerHome = tool 'SonarScanner';
     }
 
     stages {
@@ -40,6 +41,13 @@ pipeline {
                 echo 'cloning repo'
                 git url: 'https://github.com/devkishor8007/sample-api-express.git', branch: 'master'
             }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv() {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            } 
         }
         stage('test') {
             steps {
